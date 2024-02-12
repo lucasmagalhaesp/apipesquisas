@@ -24,7 +24,7 @@ class Pergunta extends Model
 
     public function respostas()
     {
-        return $this->hasMany(Resposta::class);
+        return $this->hasMany(Resposta::class)->orderBy("num_ordem");
     }
 
 }

@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\PerguntasController;
 use App\Http\Controllers\PesquisasController;
+use App\Http\Controllers\PesquisasRealizadasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +27,6 @@ Route::resource("/usuarios", UsuariosController::class);
 Route::post("/auth/login", [AuthController::class, "login"]);
 
 Route::resource("/pesquisas", PesquisasController::class);
+Route::get("/pesquisas/getIDsPerguntas/{pesquisa}", [PesquisasController::class, "getIDsPerguntas"]);
+Route::resource("/perguntas", PerguntasController::class);
+Route::resource("/pesquisasRealizadas", PesquisasRealizadasController::class);

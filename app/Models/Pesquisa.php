@@ -19,7 +19,7 @@ class Pesquisa extends Model
 
     public function perguntas()
     {
-        return $this->hasMany(Pergunta::class)->with("respostas");
+        return $this->hasMany(Pergunta::class)->orderBy("num_ordem")->with("respostas");
     }
 
     public function categoria(){

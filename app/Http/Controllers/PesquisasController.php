@@ -15,6 +15,19 @@ class PesquisasController extends Controller
         return response()->json(["sucesso" => true, "dados" => $pesquisas], 200);
     }
 
+    public function show($id)
+    {
+        if (is_null($id)) return response()->json(["sucesso" => false, "msg" => "Código da pesquisa não informado"], 400);
+
+        try {
+            $dadosPesquisa = Pesquisa::with("perguntas")->find($id);
+        } catch (\Exception $e) {
+            return response()->json(["sucesso" => false, "msg" => "Erro ao buscar dados da pesquisa ({$e->getMessage()})"], 400);
+        }
+
+        return response()->json(["sucesso" => true, "dados" => $dadosPesquisa], 200);
+    }
+
     public function store(Request $request)
     {
         $dados = $request->dados;
@@ -25,16 +38,23 @@ class PesquisasController extends Controller
 
         try{
             DB::beginTransaction();
-            $pesquisa = Pesquisa::create($dados);
+            $idPesquisa = $dados["id"];
+            unset($dados["id"]);
+            $pesquisa = Pesquisa::updateOrCreate(["id" => $idPesquisa], $dados);
             foreach($perguntas as $pergunta){
                 $respostas = $pergunta["respostas"];
                 unset($pergunta["respostas"]);
-                $perg = $pesquisa->perguntas()->create($pergunta);
+                $idPergunta = $pergunta["id"];
+                unset($pergunta["id"]);
+                $perg = $pesquisa->perguntas()->updateOrCreate(["id" => $idPergunta], $pergunta);
     
                 foreach($respostas as $resposta){
-                    $perg->respostas()->create($resposta);
+                    $idResposta = $resposta["id"];
+                    unset($resposta["id"]);
+                    $perg->respostas()->updateOrCreate(["id" => $idResposta], $resposta);
                 }
             }
+           
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();

@@ -14,12 +14,20 @@ class Pesquisa extends Model
     protected $fillable = [
         "categoria_id",
         "titulo",
-        "descricao"
+        "descricao",
+        "tipo_entrevistado"
     ];
+
+    protected $dates  = ["created_at", "updated_at"];
+
+    public function getCreatedAtAttribute($date)
+    {
+        return date("d/m/Y", strtotime($date));
+    }
 
     public function perguntas()
     {
-        return $this->hasMany(Pergunta::class)->orderBy("num_ordem")->with("respostas");
+        return $this->hasMany(Pergunta::class)->select("id", "pesquisa_id", "descricao", "num_ordem")->orderBy("num_ordem")->with("respostas");
     }
 
     public function categoria(){

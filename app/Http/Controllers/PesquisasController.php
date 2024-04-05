@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pergunta;
+use App\Models\Resposta;
 use App\Models\Pesquisa;
 use Illuminate\Http\Request;
 use DB;
@@ -41,17 +42,28 @@ class PesquisasController extends Controller
             $idPesquisa = $dados["id"];
             unset($dados["id"]);
             $pesquisa = Pesquisa::updateOrCreate(["id" => $idPesquisa], $dados);
+            
+            //remover as perguntas que foram excluídas na edição
+            Pergunta::where("pesquisa_id", $idPesquisa)->whereNotIn("id", array_map(function ($perg){
+                return $perg["id"];
+            }, $perguntas))->delete();
+            
             foreach($perguntas as $pergunta){
                 $respostas = $pergunta["respostas"];
                 unset($pergunta["respostas"]);
                 $idPergunta = $pergunta["id"];
                 unset($pergunta["id"]);
                 $perg = $pesquisa->perguntas()->updateOrCreate(["id" => $idPergunta], $pergunta);
-    
+                
+                //remover as respostas que foram excluídas na edição
+                Resposta::where("pergunta_id", $perg->id)->whereNotIn("id", array_map(function ($resp){
+                    return $resp["id"];
+                }, $respostas))->delete();
+
                 foreach($respostas as $resposta){
                     $idResposta = $resposta["id"];
                     unset($resposta["id"]);
-                    $perg->respostas()->updateOrCreate(["id" => $idResposta], $resposta);
+                    $resp = $perg->respostas()->updateOrCreate(["id" => $idResposta], $resposta);
                 }
             }
            

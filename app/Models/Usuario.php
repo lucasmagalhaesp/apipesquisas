@@ -16,11 +16,19 @@ class Usuario extends Authenticatable
         "nome",
         "senha",
         "email",
-        "confirmar_senha"
+        "confirmar_senha",
+        "ativo"
     ];
 
-    public function perfil_usuario()
+    protected $dates  = ["created_at", "updated_at"];
+
+    public function getCreatedAtAttribute($date)
     {
-        return $this->hasOne(PerfilUsuario::class);
+        return date("d/m/Y", strtotime($date));
+    }
+
+    public function perfilUsuario()
+    {
+        return $this->belongsTo(PerfilUsuario::class, "perfil_usuario_id");
     }
 }

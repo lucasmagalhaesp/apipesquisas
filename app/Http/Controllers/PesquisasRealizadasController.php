@@ -10,7 +10,7 @@ class PesquisasRealizadasController extends Controller
 {
     public function index()
     {
-        $pesquisasRealizadas = PesquisaRealizada::with("perguntasRespostas")->get();
+        $pesquisasRealizadas = PesquisaRealizada::with("perguntasRespostas", "pesquisa")->get();
         return response()->json(["sucesso" => true, "dados" => $pesquisasRealizadas], 200);
     }
 

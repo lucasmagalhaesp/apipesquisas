@@ -7,6 +7,7 @@ use App\Models\Resposta;
 use App\Models\Pesquisa;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Validator;
 
 class PesquisasController extends Controller
 {
@@ -33,6 +34,22 @@ class PesquisasController extends Controller
     {
         $dados = $request->dados;
         if (is_null($dados)) return response()->json(["sucesso" => false, "msg" => "Dados não enviados"], 400);
+
+        $validacao = Validator::make($dados, [
+            "titulo"    => "required|min:5",
+            "descricao" => "required|min:10"
+        ], [
+            "titulo.required"       => "Título da pesquisa não informado",
+            "titulo.min"            => "O título da pesquisa precisa ter pelo menos 5 caracteres",
+            "descricao.required"    => "Descrição da pesquisa não informada",
+            "descricao.min"         => "A descrição da pesquisa precisa ter pelo menos 10 caracteres"
+        ]);
+
+        $erros = $validacao->errors();
+        if (count($erros->all()) > 0) return response()->json($erros, 402);
+
+        if (count($dados["perguntas"]) == 0)
+            return response()->json("Nenhuma pergunta cadastrada", 402);
 
         $perguntas = $dados["perguntas"];
         unset($dados["perguntas"]);
@@ -81,7 +98,8 @@ class PesquisasController extends Controller
         if (is_null($pesquisa)) return response()->json(["sucesso" => false, "msg" => "Dados da pesquisa não recebidos para a exclusão"]);
 
         try {
-            $pesquisa->delete();
+            $pesquisa->ativa = "N";
+            $pesquisa->save();
         } catch (\Exception $e) {
             return response()->json(["sucesso" => false, "msg" => "Erro ao excluir pesquisa ({$e->getMessage()})"]);
         }

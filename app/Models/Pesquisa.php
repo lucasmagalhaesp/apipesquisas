@@ -15,7 +15,8 @@ class Pesquisa extends Model
         "categoria_id",
         "titulo",
         "descricao",
-        "tipo_entrevistado"
+        "tipo_entrevistado",
+        "ativa"
     ];
 
     protected $dates  = ["created_at", "updated_at"];

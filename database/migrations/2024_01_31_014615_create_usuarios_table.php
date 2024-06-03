@@ -19,7 +19,7 @@ class CreateUsuariosTable extends Migration
             $table->foreign("perfil_usuario_id")->references("id")->on("perfis_usuarios");
             $table->string("nome", 100);
             $table->string("email")->unique();
-            $table->string("senha", 100);
+            $table->string("senha", 100)->nullable();
             $table->timestamps();
         });
     }

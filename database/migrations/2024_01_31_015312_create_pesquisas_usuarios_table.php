@@ -19,6 +19,7 @@ class CreatePesquisasUsuariosTable extends Migration
             $table->foreign("pesquisa_id")->references("id")->on("pesquisas");
             $table->integer("usuario_id")->unsigned();
             $table->foreign("usuario_id")->references("id")->on("usuarios");
+            $table->integer("entrevistado_id")->nullable()->unsigned();
             $table->timestamps();
         });
     }

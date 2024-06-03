@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Validator;
 
 class UsuariosController extends Controller
 {
+    const USUARIO_ADM = 0;
+    const USUARIO_AGENTE = 1;
+    const USUARIO_ENTREVISTADO = 2;
+
     private $request;
     private $mdUsuario;
 
@@ -45,14 +49,18 @@ class UsuariosController extends Controller
         $validacaoUsuario = Validator::make($dados, $dadosValidacao["regras"], $dadosValidacao["mensagens"]);
 
         $erros = $validacaoUsuario->errors();
-        if (count($erros->all()) > 0) return response()->json(["sucesso" => false, "errosValidacao" => $erros], 402);
+        if (count($erros->all()) > 0) return response()->json($erros, 402);
 
-        //verificar se já existe algum usuário com o mesmo e-mail
+        //verificar se já existe algum usuário com o mesmo e-m""ail
         $emailExistente = Usuario::where("email", $dados["email"])->where("id", "!=", $dados["id"])->get();
         if (count($emailExistente)) return response()->json(["sucesso" => false, "msg" => "E-mail já cadastrado. Informe outro e-mail ou atualize o seu cadastro"], 400); 
 
+        $senhaPreenchida = !is_null($dados["senha"]) && $dados["senha"] != "";
+        if ($senhaPreenchida) $dados["senha"] = bcrypt($dados["senha"]);
+        else unset($dados["senha"]);
+
         unset($dados["confirmar_senha"]);
-        $dados["senha"] = bcrypt($dados["senha"]);
+        //$dados["senha"] = bcrypt($dados["senha"]);
         try {
             Usuario::updateOrCreate(["id" => $dados["id"]], $dados);
         } catch (\Exception $e) {
@@ -88,8 +96,8 @@ class UsuariosController extends Controller
         $mensagens = [
             "perfil_usuario_id.required"    => "Perfil de usuário não informado",
             "perfil_usuario_id.numeric"     => "Informe o id do perfil de usuário",
-            "nome.required"                 => "Nome do usuário não informado",
-            "email.required"                => "E-mail do usuário não informado",
+            "nome.required"                 => "Nome não informado",
+            "email.required"                => "E-mail não informado",
             //"email.unique"                  => "E-mail já cadastrado. Informe outro e-mail ou atualize o seu cadastro"
         ];
 
@@ -111,5 +119,18 @@ class UsuariosController extends Controller
             "regras"    => $regras,
             "mensagens" => $mensagens
         ];
+    }
+
+    public function check(Request $request)
+    {
+        if ($request->user("sanctum")) return response()->json(["sucesso" => true]);
+
+        return response()->json(["sucesso" => false]);
+    }
+
+    public function getTipoUsuario()
+    {
+        $perfil = auth()->user()->perfil_usuario_id;
+        return response()->json(["sucesso" => true, "perfil" => $perfil]);
     }
 }

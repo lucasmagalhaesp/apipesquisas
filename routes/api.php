@@ -23,10 +23,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource("/usuarios", UsuariosController::class);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::resource("/usuarios", UsuariosController::class);
+    Route::get("/usuarios/check", [UsuariosController::class, "check"]);
+    Route::resource("/pesquisas", PesquisasController::class);
+    Route::get("/pesquisas/getIDsPerguntas/{pesquisa}", [PesquisasController::class, "getIDsPerguntas"]);
+    Route::resource("/perguntas", PerguntasController::class);
+    Route::resource("/pesquisasRealizadas", PesquisasRealizadasController::class);
+    Route::post("/auth/logout", [AuthController::class, "logout"]);
+});
+
 Route::post("/auth/login", [AuthController::class, "login"]);
 
-Route::resource("/pesquisas", PesquisasController::class);
-Route::get("/pesquisas/getIDsPerguntas/{pesquisa}", [PesquisasController::class, "getIDsPerguntas"]);
-Route::resource("/perguntas", PerguntasController::class);
-Route::resource("/pesquisasRealizadas", PesquisasRealizadasController::class);

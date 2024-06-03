@@ -15,16 +15,16 @@ class AuthController extends Controller
         $senha = $request->dados["senha"];
 
         $usuario = Usuario::where("email", $email)->first();
-        if (is_null($usuario) || !Hash::check($senha, $usuario->senha)) return response()->json(["sucesso" => false, "msg" => "E-mail ou senha incorretos"], 400);
+        if (is_null($usuario) || !Hash::check($senha, $usuario->senha)) return response()->json("E-mail ou senha incorretos", 401);
 
         $token = $usuario->createToken("app_pesquisa");
 
-        return response()->json(["sucesso" => true, "token" => $token->plainTextToken], 200);
+        return response()->json(["sucesso" => true, "token" => $token->plainTextToken, "dadosUsuario" => $usuario], 200);
     }
 
     public function logout(Request $request)
     {
-        $request->user->tokens()->delete();
+        $request->user()->tokens()->delete();
         return response()->json(["sucesso" => true], 200);
     }
 }

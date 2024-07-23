@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\PerguntaResposta;
 use App\Models\Pesquisa;
+use App\Models\Usuario;
 
 class PesquisaRealizada extends Model
 {
@@ -32,6 +33,16 @@ class PesquisaRealizada extends Model
 
     public function pesquisa()
     {
-        return $this->belongsTo(Pesquisa::class);
+        return $this->belongsTo(Pesquisa::class)->with("perguntas");
+    }
+
+    public function agente()
+    {
+        return $this->belongsTo(Usuario::class, "usuario_id");
+    }
+
+    public function entrevistado()
+    {
+        return $this->belongsTo(Usuario::class, "entrevistado_id");
     }
 }

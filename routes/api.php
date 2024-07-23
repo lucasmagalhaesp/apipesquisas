@@ -30,8 +30,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/pesquisas/getIDsPerguntas/{pesquisa}", [PesquisasController::class, "getIDsPerguntas"]);
     Route::resource("/perguntas", PerguntasController::class);
     Route::resource("/pesquisasRealizadas", PesquisasRealizadasController::class);
+    Route::get("/pesquisasRealizadas/visualizar/{pesquisa}", [PesquisasRealizadasController::class, "visualizar"]);
     Route::post("/auth/logout", [AuthController::class, "logout"]);
 });
+
+Route::get("/pesquisasRealizadas/gerarRelatorio/{pesquisa}", [PesquisasRealizadasController::class, "gerarRelatorio"]);
 
 Route::post("/auth/login", [AuthController::class, "login"]);
 

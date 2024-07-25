@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerguntasController;
 use App\Http\Controllers\PesquisasController;
 use App\Http\Controllers\PesquisasRealizadasController;
@@ -32,6 +33,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource("/pesquisasRealizadas", PesquisasRealizadasController::class);
     Route::get("/pesquisasRealizadas/visualizar/{pesquisa}", [PesquisasRealizadasController::class, "visualizar"]);
     Route::post("/auth/logout", [AuthController::class, "logout"]);
+
+    Route::group(["prefix" => "dashboard"], function (){
+        Route::get("/", [DashboardController::class, "index"]);
+        Route::get("/getPesquisasRealizadas", [DashboardController::class, "getPesquisasRealizadas"]);
+    });
 });
 
 Route::get("/pesquisasRealizadas/gerarRelatorio/{pesquisa}", [PesquisasRealizadasController::class, "gerarRelatorio"]);

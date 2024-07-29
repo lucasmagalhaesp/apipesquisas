@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Pesquisa;
 use App\Models\PesquisaRealizada;
 use App\Models\Usuario;
+use App\Models\Resposta;
 
 class DashboardController extends Controller
 {
@@ -32,5 +33,10 @@ class DashboardController extends Controller
         $groups = collect($pesquisasRealizadas)->groupBy("pesquisa_id");
 
         return response()->json(array_slice($groups->toArray(), 0), 200);
+    }
+
+    public function getRespostas()
+    {
+        return response()->json(Resposta::select("id", "descricao")->get(), 200);
     }
 }

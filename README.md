@@ -1,6 +1,6 @@
 # API Pesquisas de Opinião
 
-## Qual o objetivo dessa API?
+## Qual é a função dessa API?
 
 Essa API foi criada para servir ao sistema `Pesquisas de Opinião` (repositório lucasmagalhaesp/pesquisas), separando a toda a lógica de programação, acesso ao banco de dados, geração de relatórios, etc, do front-end do sistema.
 

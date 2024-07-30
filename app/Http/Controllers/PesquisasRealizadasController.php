@@ -18,7 +18,7 @@ class PesquisasRealizadasController extends Controller
             if ($perfil != 1) $query->where("usuario_id", auth()->user()->id);
         })
         ->orderBy("id", "desc")
-        ->with("perguntasRespostas", "pesquisa")->get();
+        ->with("perguntasRespostas", "pesquisa", "agente", "entrevistado")->get();
         
         return response()->json(["sucesso" => true, "dados" => $pesquisasRealizadas], 200);
     }

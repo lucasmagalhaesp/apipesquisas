@@ -15,8 +15,6 @@ class CreatePesquisasTable extends Migration
     {
         Schema::create("pesquisas", function (Blueprint $table) {
             $table->increments("id");
-            $table->integer("categoria_id")->unsigned();
-            $table->foreign("categoria_id")->references("id")->on("categorias");
             $table->string("titulo", 100);
             $table->string("descricao");
             $table->enum("ativa", ["S","N"])->default("S");

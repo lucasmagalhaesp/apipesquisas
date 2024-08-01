@@ -11,9 +11,27 @@ use Illuminate\Support\Facades\Validator;
 
 class PesquisasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pesquisas = Pesquisa::with("perguntas")->get();
+        $filtros = $request->filtros ?? null;
+        $pesquisas = Pesquisa::with("perguntas")
+        ->where(function ($query) use ($filtros){
+            if (!is_null($filtros)){
+                if (!is_null($filtros["titulo"]) && $filtros["titulo"] != "")
+                    $query->where("titulo", "like", "%".$filtros["titulo"]."%");
+    
+                if (!is_null($filtros["descricao"]) && $filtros["descricao"] != "")
+                    $query->where("descricao", "like", "%".$filtros["descricao"]."%");
+    
+                if (!is_null($filtros["tipo_entrevistado"]) && $filtros["tipo_entrevistado"] != "" && $filtros["tipo_entrevistado"] != "T")
+                    $query->where("tipo_entrevistado", $filtros["tipo_entrevistado"]);
+    
+                if (!is_null($filtros["ativa"]) && $filtros["ativa"] != "" && $filtros["ativa"] != "T")
+                    $query->where("ativa", $filtros["ativa"]);
+            }
+
+        })
+        ->get();
         return response()->json(["sucesso" => true, "dados" => $pesquisas], 200);
     }
 

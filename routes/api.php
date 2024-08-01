@@ -26,11 +26,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource("/usuarios", UsuariosController::class);
+    Route::post("/usuarios/getDados", [UsuariosController::class, "index"]);
     Route::get("/usuarios/check", [UsuariosController::class, "check"]);
     Route::resource("/pesquisas", PesquisasController::class);
+    Route::post("/pesquisas/getDados", [PesquisasController::class, "index"]);
     Route::get("/pesquisas/getIDsPerguntas/{pesquisa}", [PesquisasController::class, "getIDsPerguntas"]);
     Route::resource("/perguntas", PerguntasController::class);
     Route::resource("/pesquisasRealizadas", PesquisasRealizadasController::class);
+    Route::post("/pesquisasRealizadas/getDados", [PesquisasRealizadasController::class, "index"]);
     Route::get("/pesquisasRealizadas/visualizar/{pesquisa}", [PesquisasRealizadasController::class, "visualizar"]);
     Route::post("/auth/logout", [AuthController::class, "logout"]);
 

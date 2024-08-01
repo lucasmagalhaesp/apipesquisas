@@ -11,11 +11,23 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PesquisasRealizadasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $filtros = $request->filtros;
         $perfil = auth()->user()->perfil_usuario_id;
-        $pesquisasRealizadas = PesquisaRealizada::where(function ($query) use ($perfil){
+        $pesquisasRealizadas = PesquisaRealizada::where(function ($query) use ($perfil, $filtros){
             if ($perfil != 1) $query->where("usuario_id", auth()->user()->id);
+
+            if (!is_null($filtros["pesquisa_id"]) && $filtros["pesquisa_id"] != "" && $filtros["pesquisa_id"] > 0)
+                $query->where("pesquisa_id", $filtros["pesquisa_id"]);
+
+            if (is_null($filtros["entrevistado_id"])){}
+            else if ($filtros["entrevistado_id"] == 0) $query->whereNull("entrevistado_id");
+            else if (!is_null($filtros["entrevistado_id"]) && $filtros["entrevistado_id"] != "")
+                $query->where("entrevistado_id", $filtros["entrevistado_id"]);
+
+            if (!is_null($filtros["usuario_id"]) && $filtros["usuario_id"] != "" && $filtros["usuario_id"] > 0)
+                $query->where("usuario_id", $filtros["usuario_id"]);
         })
         ->orderBy("id", "desc")
         ->with("perguntasRespostas", "pesquisa", "agente", "entrevistado")->get();

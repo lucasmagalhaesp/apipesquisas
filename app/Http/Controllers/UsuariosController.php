@@ -22,8 +22,25 @@ class UsuariosController extends Controller
 
     public function index()
     {
+        $filtros = $this->request->filtros ?? null;
         try {
-            $dados = Usuario::with("perfilUsuario")->get();
+            $dados = Usuario::with("perfilUsuario")
+                    ->where(function ($query) use ($filtros){
+                        if (!is_null($filtros)){
+                            if (!is_null($filtros["nome"]) && $filtros["nome"] != "")
+                                $query->where("nome", "like", "%".$filtros["nome"]."%");
+    
+                            if (!is_null($filtros["email"]) && $filtros["email"] != "")
+                                $query->where("email", "like", "%".$filtros["email"]."%");
+    
+                            if (!is_null($filtros["perfil_usuario_id"]) && $filtros["perfil_usuario_id"] != "" && $filtros["perfil_usuario_id"] > 0)
+                                $query->where("perfil_usuario_id", $filtros["perfil_usuario_id"]);
+    
+                            if (!is_null($filtros["ativo"]) && $filtros["ativo"] != "" && $filtros["ativo"] != "T")
+                                $query->where("ativo", $filtros["ativo"]);
+                        }
+                    })
+                    ->get();
         } catch (\Exception $e) {
             return response()->json(["sucesso" => false, "msg" => "Erro ao buscar dados dos usuários. ({$e->getMessage()})"], 400);
         }

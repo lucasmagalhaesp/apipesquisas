@@ -23,6 +23,11 @@ Configure seu banco de dados no arquivo .env
 php artisan migrate
 ```
 
+## Insira um usuário inicial no banco de dados (e-mail: admin@pesquisa.sem, senha: 123456)
+```bash
+php artisan db:seed
+```
+
 ## Inicie a aplicação em ambiente de desenvolvimento
 ```bash
 php artisan serve

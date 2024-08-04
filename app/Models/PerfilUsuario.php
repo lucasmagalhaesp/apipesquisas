@@ -11,6 +11,7 @@ class PerfilUsuario extends Model
     use HasFactory;
 
     protected $table = "perfis_usuarios";
+    protected $fillable = ["id", "nome"];
 
     public function usuario(){
         return $this->belongsTo(Usuario::class);
